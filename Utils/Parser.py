@@ -9,10 +9,9 @@ def processAddressInfo(info_file):
 	ip_info=info_file.readline().split("=")
 	port_info=info_file.readline().split("=")
 	if ip_info[0] != "IP" or port_info[0] != "PORT" :
-		raise ValueError("File format should be:\nIP=\"<ip addres>\"\nPORT=<port>"
-	ip_addr = ip_info[1]
-	ip_segments = ip_addr.split("\"")[1].split(".")
-	print(ip_segments)
+		raise ValueError("File format should be:\nIP=\"<ip addres>\"\nPORT=<port>")
+	ip_addr = ip_info[1].split("\n")[0][1:-1]
+	ip_segments = ip_addr.split(".")
 	if len(ip_segments)!=4:
 		raise TypeError("Invalid ip address. Format should range from 00.00.00.00 to 255.255.255.255")
 	for segment in ip_segments:

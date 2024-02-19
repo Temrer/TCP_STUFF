@@ -1,7 +1,7 @@
 import socket
 import threading
 import Utils.Parser as Parser
-
+import sys
 
 
 
@@ -15,18 +15,31 @@ except FileNotFoundError as e:
 	print("No Addres information specified. Trying to connect to localhost...")
 
 
-print(HOST,PORT)
 ContinueCondition = True
 response = None
 message_target = "all"
 
 def Main(s):
 	global ContinueCondition
+	nickname_input = True
+	while(nickname_input):
+		usrInput = input()
+		while usrInput.lower() == "exit":
+			print("nickname is reserved")
+			usrInput = input()
+
+		processedMessage = bytes(f"(all):{usrInput}", "utf-8")
+		if(sys.getsizeof(processedMessage)<91):
+			nickname_input = False
+			s.sendall(processedMessage)
+		else:
+			print("Nickname too long")
+	
 	while ContinueCondition:
 		global message_target
 		usrInput = input()
 		if usrInput == "exit":
-			s.close()
+			s.sendall(b"(exit):")
 			ContinueCondition = False
 			return
 		
@@ -36,7 +49,10 @@ def Main(s):
 		
 		msg = f"({message_target}): {usrInput}"
 		processedMessage = bytes(msg, "utf-8")
-		s.sendall(processedMessage)
+		if(sys.getsizeof(processedMessage)<1024):
+			s.sendall(processedMessage)
+		else:
+			print("Message not sent. Message too long")
 
 
 def Listen(s):
@@ -44,6 +60,8 @@ def Listen(s):
 	while ContinueCondition:
 		response = s.recv(1024)
 		msg = response.decode("utf-8")
+		if msg == "ClientExit":
+			s.close
 		print(f"<< {msg}")
 
 

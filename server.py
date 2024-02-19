@@ -21,11 +21,14 @@ def Broadcast(usr_data, msg):
 
 def ProcessMessage(usr_data, msg):
 	target, msg = Parser.parseMsg(msg)
-	if target != "all":
-		#do stuff
-		return
-	
-	Broadcast(usr_data, msg)
+	if target == "all":
+		Broadcast(usr_data, msg)
+		return True
+	elif target == "exit":
+		usr_data[0].sendall(b"exit")
+		msg = f"{usr_data[2]} has exited"
+		Broadcast((None, "", "<<SYSTEM>>"), msg)
+		return False
 
 
 def handleConnection(conn_data):
@@ -37,17 +40,16 @@ def handleConnection(conn_data):
 	global Users
 	Users.append(usr_data)
 	print(f"connection has been established at address {addr[0]}, port {addr[1]}")
+	Broadcast((None, usr_data[1], "<<SYSTEM>>"), f"{usr_data[2]} has joined the server")
 	userNotExited = True
 	while userNotExited:
 		data = conn.recv(1024)
 		print(data)
 		msg = data.decode("utf-8")
-		if not data:
-			print("user exited")
-			conn.close()
-			Users.remove(usr_data)
-			return
-		ProcessMessage(usr_data, msg)
+		userNotExited = ProcessMessage(usr_data, msg)
+	conn.close()
+	Users.remove(usr_data)
+	print(f"{usr_data[1]}({usr_data[2]}) has exited")
 
 
 def runLobby():
