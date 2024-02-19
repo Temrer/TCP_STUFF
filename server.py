@@ -2,8 +2,8 @@ import socket
 import threading
 import Utils.Parser as Parser
 
-HOST = "127.0.0.1"  # Standard loopback interface address (localhost)
-PORT = 20048  # Port to listen on (non-privileged ports are > 1023)
+HOST = "192.168.0.169"  # Standard loopback interface address (localhost)
+PORT = 20048 # Port to listen on (non-privileged ports are > 1023)
 
 Users = []
 

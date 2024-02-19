@@ -1,9 +1,21 @@
 import socket
 import threading
+import Utils.Parser as Parser
+
+
 
 
 HOST = "127.0.0.1"
 PORT = 20048
+
+try:
+	with open("ServerAddress.txt", "r") as source:
+		HOST, PORT = Parser.processAddressInfo(source) 
+except FileNotFoundError as e:
+	print("No Addres information specified. Trying to connect to localhost...")
+
+
+print(HOST,PORT)
 ContinueCondition = True
 response = None
 message_target = "all"
